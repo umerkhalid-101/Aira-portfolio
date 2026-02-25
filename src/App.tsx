@@ -532,26 +532,122 @@ const ProjectDetailPage = () => {
   );
 };
 
+// ✅ Replace ONLY your PlaygroundPage component with this
+const getDriveId = (url: string) => {
+  // supports:
+  // https://drive.google.com/file/d/<ID>/view?usp=sharing
+  // https://drive.google.com/open?id=<ID>
+  // https://drive.google.com/uc?id=<ID>&export=download
+  const m1 = url.match(/\/file\/d\/([^/]+)\//);
+  if (m1?.[1]) return m1[1];
+  const m2 = url.match(/[?&]id=([^&]+)/);
+  if (m2?.[1]) return m2[1];
+  return "";
+};
+
+const driveImgSrc = (url: string) => {
+  const id = getDriveId(url);
+  // Google-hosted image URL (most reliable for <img>)
+  return id ? `https://lh3.googleusercontent.com/d/${id}` : url;
+};
+
+const driveVideoPreview = (url: string) => {
+  const id = getDriveId(url);
+  // Use Drive preview in an iframe (most reliable for video)
+  return id ? `https://drive.google.com/file/d/${id}/preview` : url;
+};
+
 const PlaygroundPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const images = [
+    "https://drive.google.com/file/d/1MrXniQ49LwD4QxyQnJ4gmalPYcuAb1bs/view?usp=sharing",
+    "https://drive.google.com/file/d/1jHQ0waO0x9r__EmHKpS1-Y4fXC-kbpwa/view?usp=sharing",
+    "https://drive.google.com/file/d/1X7DCJhcLk1MtY7b1nasWYmk9mgoC-2n1/view?usp=sharing",
+    "https://drive.google.com/file/d/1s3T6HMnNoPH0L_fPDWYVfql_smZhNOU5/view?usp=sharing",
+    "https://drive.google.com/file/d/1Rx49AjDKcyudXKXrCiGNFNgtzA8oAXYu/view?usp=sharing",
+    "https://drive.google.com/file/d/1O__mXap0CmtbUMBqvYcjvG1JZDR8nnq6/view?usp=sharing",
+    "https://drive.google.com/file/d/1I21GnIVmSgOTidZRGPeruGXFlanzNhKL/view?usp=sharing",
+    "https://drive.google.com/file/d/1Qd8LXvtGE759hWg4tPAy6lZrNPGFivc7/view?usp=sharing",
+    "https://drive.google.com/file/d/1yqpINtBTu_B0DjiWorSrUfZPztAP2nK8/view?usp=sharing",
+    "https://drive.google.com/file/d/1RmGN5GDBSu4jYog0v90dQfCGDKkiNwx4/view?usp=sharing",
+    "https://drive.google.com/file/d/15kZwTI-kLTuu8Okcwob606hweV2v8KMf/view?usp=sharing",
+    "https://drive.google.com/file/d/16Hb7G1bz1nc02XyL31QdrbZS-UGjZduH/view?usp=sharing",
+    "https://drive.google.com/file/d/1S507J3wDJjJEGCQQPzWoCz6_jGvzgn4L/view?usp=sharing",
+    "https://drive.google.com/file/d/1znVa9329poYijRaDvWz4XrXxGgTKQ1Yy/view?usp=sharing",
+  ].map(driveImgSrc);
+
+  const videos = [
+    "https://drive.google.com/file/d/1EgWjq0tNQMQwXErkizYtCTArP_Qr7nQF/view?usp=sharing",
+    "https://drive.google.com/file/d/1xOPWCYqTokXSnvQRHd9AoDkM9s2-azks/view?usp=sharing",
+    "https://drive.google.com/file/d/1dp7slQO39XACLGZpJg6eoWZjVwBa-pTd/view?usp=sharing",
+  ].map(driveVideoPreview);
+
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="pt-32"
     >
+      {/* centered title only */}
       <div className="px-6 md:px-10">
-        <SectionHeader subtitle="FUN WORKS ALONG THE WAY" title="PLAY-GROUND" />
+        <h1 className="text-center text-huge leading-none tracking-tighter uppercase">
+          PLAYGROUND
+        </h1>
       </div>
-      <div className="flex flex-col">
-        <Tile title="AI Ethics" category="Article" year="2024" />
-        <Tile title="Microcopy" category="Case Study" year="2023" />
-        <Tile title="Automation" category="Workshop" year="2023" />
-        <Tile title="Future of UX" category="Talk" year="2022" />
+
+      <div className="px-4 md:px-10 mt-12 pb-40">
+        {/* Images 1:1 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {images.map((src, i) => (
+            <motion.div
+              key={`img-${i}`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden rounded-3xl bg-white border border-ink/10"
+            >
+              <div className="aspect-square w-full">
+                <img
+                  src={src}
+                  alt={`Playground image ${i + 1}`}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  draggable={false}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Videos 9:16 */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {videos.map((src, i) => (
+            <motion.div
+              key={`vid-${i}`}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="overflow-hidden rounded-3xl bg-white border border-ink/10"
+            >
+              <div className="aspect-[9/16] w-full relative bg-black">
+                <iframe
+                  src={src}
+                  className="absolute inset-0 w-full h-full border-0"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                  title={`Playground video ${i + 1}`}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
